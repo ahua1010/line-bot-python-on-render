@@ -233,7 +233,7 @@ def set_awaiting_input(user_id, input_type, event, prompt_message):
 def send_reply(event, message):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        line_bot_api.push_message_with_http_info(
+        line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text=message)]
