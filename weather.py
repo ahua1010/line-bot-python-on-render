@@ -33,19 +33,24 @@ from datetime import datetime
 import requests
 import sqlite3
 import logging
-import re  # 正則表達式模組
+import re
+
+import os
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 user_settings = {}
 scheduler = BackgroundScheduler()
 scheduler.start()
 
+load_dotenv()
+
 # 設定日誌
 logging.basicConfig(level=logging.INFO)  # 設置日誌級別為INFO
 
 # LINE Bot API 設定
-configuration = Configuration(access_token='q0a/DTzYO1y0+qNklYXK1IVzrQWer8tbBR7j9x0BsZ0KuVEpdqxIXWPVu15ojoBlJ0LlF3jg58fWA78YMlZDb7DRLO9mDRt4F6zJuXs+xjqJX03JN2UcuhmNRF8vRpQUMGKIr251bZQSn2QpNxpoEwdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('b8a9a019881d9cc3e631bcea321b2594')
+configuration = Configuration(access_token=os.environ.get("LINE_CHANNEL_ACCESS_TOKEN"))
+handler = WebhookHandler(os.environ.get("LINE_CHANNEL_SECRET"))
 
 ### SQLite數據庫邏輯 -----------------------------------------------------
 def init_db():
@@ -271,7 +276,7 @@ def quick_reply(event):
 ### 執行邏輯函式----------------------------------------------------------
 # 獲取天氣資訊的函數
 def get_weather(user_id, location):
-    api_key = "CWA-022D9A1D-57B9-4938-B42F-74BEEF7EEAAB"
+    api_key = os.environ.get("CWA_API_KEY")
     api_url_1 = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-089?Authorization={api_key}&locationName={location}"
     response_1 = requests.get(api_url_1)
     
@@ -326,7 +331,7 @@ def get_weather(user_id, location):
                 rain_alert_message =  f"{int(time_difference)}小時後高機率下雨"
                 break
         else:
-            rain_alert_message =  "未來無降雨風險"
+            rain_alert_message =  "未來12小時無降雨風險"
         
     station_id = get_uv_station_by_city(location)
     api_url_2 = f"https://opendata.cwa.gov.tw/api/v1/rest/datastore/O-A0005-001?Authorization={api_key}&StationID={station_id}"
@@ -444,5 +449,5 @@ if __name__ == "__main__":
     for user_id, settings in user_settings.items():
         if settings["send_time"] and settings["location"]:
             schedule_weather_task(user_id, settings["send_time"])
-    # send_weather_info("Ua06c92cabcc3df6268665d6c944e877a")
+    send_weather_info("Ua06c92cabcc3df6268665d6c944e877a")
     app.run()
