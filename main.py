@@ -417,4 +417,4 @@ for user_id, settings in user_settings.items():
     if settings["send_time"] and settings["location"]:
         schedule_weather_task(user_id, settings["send_time"])
 send_weather_info("Ua06c92cabcc3df6268665d6c944e877a")
-app.run()
+app.run(host="127.0.0.1", port=8080, debug=True)
