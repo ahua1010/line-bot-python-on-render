@@ -156,7 +156,7 @@ def handle_message(event):
     user_id = event.source.user_id
     logging.info(f"成功進入用戶對話 {user_id}")
     user_message = event.message.text.strip()
-    # logging.info(f"Received message: {user_message}, awaiting_input: {user_settings[user_id].get('awaiting_input')}")
+    logging.info(f"收到來自 {user_id} 的訊息: {user_message}")
 
     if user_message == "/cancel":
         user_settings[user_id]['awaiting_input'] = None
