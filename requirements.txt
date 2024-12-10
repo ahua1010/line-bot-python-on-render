@@ -1,0 +1,8 @@
+line-bot-sdk==3.7.0
+APScheduler==3.11.0
+Flask==3.1.0
+requests==2.31.0
+aiohttp==3.9.1
+python-dateutil==2.9.0.post0
+tzlocal==5.2
+schedule==1.2.2

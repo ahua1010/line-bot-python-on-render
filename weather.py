@@ -237,42 +237,6 @@ def send_reply(event, message):
             )
         )
 
-def quick_reply(event):
-    quickReply = QuickReply(
-                    items=[
-                        QuickReplyItem(
-                            action=DatetimePickerAction(
-                                label="Datetime",
-                                data="datetime",
-                                mode="datetime",
-                                initial="2024-01-01T00:00",
-                                max="2025-01-01T00:00",
-                                min="2023-01-01T00:00"
-                            )
-                        ),
-                        QuickReplyItem(
-                            action=CameraAction(label="Camera")
-                        ),
-                        QuickReplyItem(
-                            action=CameraRollAction(label="Camera Roll")
-                        ),
-                        QuickReplyItem(
-                            action=LocationAction(label="Location")
-                        )
-                    ]
-                )
-    with ApiClient(configuration) as api_client:
-        line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message(
-            ReplyMessageRequest(
-                reply_token=event.reply_token, 
-                messages=[TextMessage(
-                    text='請選擇項目',
-                    quick_reply=quickReply
-                )]
-            )
-        )
-
 ### 執行邏輯函式----------------------------------------------------------
 # 獲取天氣資訊的函數
 def get_weather(user_id, location):
