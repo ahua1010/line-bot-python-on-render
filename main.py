@@ -167,7 +167,6 @@ def handle_message(event):
         set_awaiting_input(user_id, 'send_time', event, f"請輸入新的發送時間，格式為 HH:MM（目前時間為 {user_settings[user_id]['send_time']}\n取消設定請輸入/cancel）")
     elif user_message == "/setLocation":
         set_awaiting_input(user_id, 'location', event, "請輸入新的地點，例如：臺北市。\n取消設定請輸入/cancel")
-        quick_reply(event)
     elif user_message == "/setContent":
         set_awaiting_input(user_id, 'content', event, "請問您希望接收哪些資訊？\n1. 下雨預告\n2. 紫外線警報\n請回覆「1」或「2」，或回覆「3」。\n取消設定請輸入/cancel")
     elif user_message == "/currentWeather":
@@ -230,7 +229,7 @@ def set_awaiting_input(user_id, input_type, event, prompt_message):
 def send_reply(event, message):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message(
+        line_bot_api.push_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text=message)]
