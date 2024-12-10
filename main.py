@@ -154,6 +154,7 @@ def handle_message(event):
     主邏輯，負責監聽用戶對話，並依照輸入類型處理，分成首次註冊、修改設定
     '''
     user_id = event.source.user_id
+    logging.info(f"成功進入用戶對話 {user_id}")
     user_message = event.message.text.strip()
     # logging.info(f"Received message: {user_message}, awaiting_input: {user_settings[user_id].get('awaiting_input')}")
 
@@ -164,6 +165,7 @@ def handle_message(event):
 
     # 根據用戶指令執行功能
     if user_message == "/setTime":
+        logging.info(f"成功進入功能函數")
         set_awaiting_input(user_id, 'send_time', event, f"請輸入新的發送時間，格式為 HH:MM（目前時間為 {user_settings[user_id]['send_time']}\n取消設定請輸入/cancel）")
     elif user_message == "/setLocation":
         set_awaiting_input(user_id, 'location', event, "請輸入新的地點，例如：臺北市。\n取消設定請輸入/cancel")
@@ -223,7 +225,9 @@ def process_content_input(user_id, message, event):
 # 設定等待輸入狀態並傳送提示訊息
 def set_awaiting_input(user_id, input_type, event, prompt_message):
     user_settings[user_id]['awaiting_input'] = input_type
+    logging.info(f"準備發送訊息")
     send_reply(event, prompt_message)
+    logging.info(f"成功發送對話")
 
 # 回覆訊息
 def send_reply(event, message):
