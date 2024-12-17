@@ -272,7 +272,7 @@ def get_weather(user_id, location):
 
     
     for time_data in data["WeatherElement"][0]["Time"]:
-        start_time = datetime.strptime(time_data["DataTime"], "%Y-%m-%d %H:%M:%S")
+        start_time = datetime.fromisoformat(time_data["DataTime"])
 
         if current_time <= start_time:
             current_temp = int(time_data["ElementValue"][0]["Temperature"])
@@ -287,7 +287,7 @@ def get_weather(user_id, location):
     rain_alert_message = ""
     if user_settings[user_id]['rain_alert']:
         for forecast in data['WeatherElement'][7]['Time']:
-            start_time = datetime.strptime(forecast['StartTime'], '%Y-%m-%d %H:%M:%S')
+            start_time = datetime.fromisoformat(forecast['StartTime'])
             rain_probability = int(forecast['ElementValue'][0]['ProbabilityOfPrecipitation'])
 
             if start_time > current_time and rain_probability > threshold:
@@ -408,13 +408,17 @@ def schedule_weather_task(user_id, send_time):
         id=job_id
     )
     logging.info(f"已為用戶 {user_id} 排程每日 {send_time} 的天氣資訊推送")
+    
+def main():
+    init_db()
+    user_settings = load_user_settings()
+    
+    for user_id, settings in user_settings.items():
+        if settings["send_time"] and settings["location"]:
+            schedule_weather_task(user_id, settings["send_time"])
+    send_weather_info("Ua06c92cabcc3df6268665d6c944e877a")
+    app.run(host="0.0.0.0", port=os.environ.get("PORT"), debug=True)
+    
+if __name__ == "__main__":
+    main()
 
-# if __name__ == "__main__":
-init_db()
-user_settings = load_user_settings()
-
-for user_id, settings in user_settings.items():
-    if settings["send_time"] and settings["location"]:
-        schedule_weather_task(user_id, settings["send_time"])
-send_weather_info("Ua06c92cabcc3df6268665d6c944e877a")
-app.run(host="0.0.0.0", port=os.environ.get("PORT"), debug=True)
